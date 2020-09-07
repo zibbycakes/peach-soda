@@ -16,6 +16,10 @@ cur = conn.cursor()
 
 tz = timezone('America/Chicago')
 
+@app.route('/')
+def ping():
+    return {'success': 'Hello world!'}
+
 @app.route('/suggestions', methods=['GET', 'POST'])
 def suggestion():
     if request.method == 'GET':
@@ -51,7 +55,7 @@ def get_suggestions():
 
 def post_suggestions(suggestion_text):
     try:
-        now_string = datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S %Z')
+        now_string = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S %Z')
         cur.execute("insert into music_suggestions (suggestion, date_added) values('" + suggestion_text + "','" + now_string + "')")
         conn.commit()
         return {'success': 'successfully added "' + suggestion_text + '" to the database at time ' + now_string + '.'}
@@ -79,7 +83,7 @@ def get_suggestion(suggestion_id):
 @app.route('/suggestions/<suggestion_id>/use', methods=['PUT'])
 def set_suggestion_to_used(suggestion_id):
     try:
-        now_string = datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S %Z')
+        now_string = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S %Z')
         cur.execute("update music_suggestions set date_used='"+ now_string +"', used=true where id="+suggestion_id)
         conn.commit()
         return {'success': 'successfully set id ' + suggestion_id + ' to used at time ' + now_string +'.'}
