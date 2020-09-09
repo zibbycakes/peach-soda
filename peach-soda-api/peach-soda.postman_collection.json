@@ -6,139 +6,267 @@
 	},
 	"item": [
 		{
-			"name": "GET all suggestions",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+			"name": "suggestions",
+			"item": [
+				{
+					"name": "GET all suggestions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{cname}}/suggestions",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"suggestions"
+							]
+						}
 					},
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://{{cname}}/suggestions",
-					"protocol": "http",
-					"host": [
-						"{{cname}}"
-					],
-					"path": [
-						"suggestions"
-					]
+					"response": []
+				},
+				{
+					"name": "POST a suggestion",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"suggestion\": \"posting a suggestion from postman 3000\",\r\n    \"user_id\": 1\r\n}"
+						},
+						"url": {
+							"raw": "http://{{cname}}/suggestions",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"suggestions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET a suggestion, based on id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{cname}}/suggestions/4",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"suggestions",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT a suggestion into used mode",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://{{cname}}/suggestions/1/use",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"suggestions",
+								"1",
+								"use"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT a suggestion into active mode",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://{{cname}}/suggestions/1/activate",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"suggestions",
+								"1",
+								"activate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a suggestion removal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://{{cname}}/suggestions/1/remove",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"suggestions",
+								"1",
+								"remove"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "POST a suggestion",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+			"name": "users",
+			"item": [
+				{
+					"name": "POST a new user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\": \"Postman\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{cname}}/user",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"user"
+							]
+						}
 					},
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"suggestion\": \"posting a suggestion from postman 3000\"\r\n}"
+					"response": []
 				},
-				"url": {
-					"raw": "http://{{cname}}/suggestions",
-					"protocol": "http",
-					"host": [
-						"{{cname}}"
-					],
-					"path": [
-						"suggestions"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET a suggestion, based on id",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+				{
+					"name": "POST a user removal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\": \"Postman\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{cname}}/user",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"user"
+							]
+						}
 					},
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://{{cname}}/suggestions/4",
-					"protocol": "http",
-					"host": [
-						"{{cname}}"
-					],
-					"path": [
-						"suggestions",
-						"4"
-					]
+					"response": []
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "PUT a suggestion into used mode",
-			"request": {
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http:/{{cname}}/suggestions/4/use",
-					"host": [
-						"http"
-					],
-					"port": "",
-					"path": [
-						"{{cname}}",
-						"suggestions",
-						"4",
-						"use"
-					]
-				}
-			},
-			"response": []
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"protocolProfileBehavior": {}
