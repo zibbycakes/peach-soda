@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d1f0618c-b5a0-4c4a-b24c-21ed9e2381f9",
+		"_postman_id": "503a8591-dddc-481a-b9dc-06b45e0c7e62",
 		"name": "peach-soda",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -281,18 +281,14 @@
 								"value": "application/json"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"posty\",\r\n    \"password\": \"man\"\r\n}"
-						},
 						"url": {
-							"raw": "http://{{cname}}/login",
+							"raw": "http://{{cname}}/logout",
 							"protocol": "http",
 							"host": [
 								"{{cname}}"
 							],
 							"path": [
-								"login"
+								"logout"
 							]
 						}
 					},
@@ -334,7 +330,7 @@
 				{
 					"name": "a current user test",
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -347,18 +343,11 @@
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"first_name\": \"Postman\"\r\n}"
-						},
 						"url": {
-							"raw": "http://{{cname}}/user",
+							"raw": "http://{{cname}}",
 							"protocol": "http",
 							"host": [
 								"{{cname}}"
-							],
-							"path": [
-								"user"
 							]
 						}
 					},
