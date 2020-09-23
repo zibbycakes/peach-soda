@@ -169,8 +169,7 @@ def login():
             'password': row[3],
             'spotify_id': row[4]
         }
-        print(user)
-        if login_data['password'] != check_password_hash(user['password']): #change this to use hashes (werkzeug.security generate_password_hash, check_password_hash)
+        if not check_password_hash(user['password'], login_data['password']):
             return {'error': 'incorrect username or password'}
         else:
             session['username'] = user['username']
