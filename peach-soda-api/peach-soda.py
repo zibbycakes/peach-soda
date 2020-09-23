@@ -1,12 +1,15 @@
-from flask import Flask
+from flask import Flask, session
 from flask import request
 import psycopg2
-from config import config
+from config import config, secret
 import json
 from datetime import datetime
 from pytz import timezone
+from markupsafe import escape
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+app.secret_key = secret()
 
 params = config()
 print('connecting to the postgres db...')
@@ -117,13 +120,30 @@ def remove_suggestion(suggestion_id):
 @app.route('/user', methods=['POST'])
 def add_user():
     try:
-        req_data = request.get_json()
-        cur.execute("insert into users (first_name) values ('" + req_data['first_name'] + "')")
-        conn.commit()
-        return {'success': 'successfully added user with first name ' + req_data['first_name']}
+        req_data = request.get_json()        
+        exist = does_user_exist(req_data['username'])
+        if(exist != True):
+            add_query = "insert into users (first_name, username, password) values ('" + req_data['first_name'] + "','"+ req_data['username'] + "','"+ generate_password_hash(req_data['password'])+ "')"
+            cur.execute(add_query)
+            conn.commit()
+            return {'success': 'successfully added user with username ' + req_data['username']}
+        else:
+            return {'error': 'username ' + req_data['username'] + ' already exists'}
     except Exception as e:
         print(e)
-        return {'error': 'adding user with first name "' + req_data['first_name'] + '" was unsuccessful.'}    
+        return {'error': 'adding user with username "' + req_data['username'] + '" was unsuccessful.'}
+
+def does_user_exist(username):
+    try:
+        check_query = "select count(*) from users where username = '" + username + "'"
+        cur.execute(check_query)
+        row = cur.fetchone()
+        if(row[0] > 0):
+            return True
+        return False
+    except Exception as e:
+        print(e)
+        return false
 
 @app.route('/user/<user_id>/remove', methods=['POST'])
 def remove_user(user_id):
@@ -134,3 +154,31 @@ def remove_user(user_id):
     except Exception as e:
         print(e)
         return {'error': 'removing user with id"' + user_id + '" was unsuccessful.'}    
+
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        login_data = request.get_json()
+        cur.execute("select user_id, first_name, username, password, spotify_id from users where username=\'" + login_data['username'] + "\'")
+        row = cur.fetchone()
+
+        user = {
+            'user_id': row[0],
+            'first_name': row[1],
+            'username': row[2],
+            'password': row[3],
+            'spotify_id': row[4]
+        }
+        print(user)
+        if login_data['password'] != check_password_hash(user['password']): #change this to use hashes (werkzeug.security generate_password_hash, check_password_hash)
+            return {'error': 'incorrect username or password'}
+        else:
+            session['username'] = user['username']
+            session['first_name'] = user['first_name']
+            return {'success': 'Successfully logged in for ' + escape(session['username'])}
+    except psycopg2.ProgrammingError as e:
+        print(e)
+        return {'error': 'Incorrect username or password.'}
+    except Exception as e:
+        print(e)
+        return {'error': 'Unknown error while logging in'}

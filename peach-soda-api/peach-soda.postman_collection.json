@@ -217,7 +217,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"first_name\": \"Postman\"\r\n}"
+							"raw": "{\r\n    \"first_name\": \"Postman\",\r\n    \"username\": \"posty\",\r\n    \"password\": \"man\"\r\n}"
 						},
 						"url": {
 							"raw": "http://{{cname}}/user",
@@ -227,6 +227,39 @@
 							],
 							"path": [
 								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST a login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"posty\",\r\n    \"password\": \"man\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{cname}}/login",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"login"
 							]
 						}
 					},
