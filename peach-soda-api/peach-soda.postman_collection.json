@@ -266,7 +266,73 @@
 					"response": []
 				},
 				{
+					"name": "POST a logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"posty\",\r\n    \"password\": \"man\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{cname}}/login",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST a user removal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"first_name\": \"Postman\"\r\n}"
+						},
+						"url": {
+							"raw": "http://{{cname}}/user",
+							"protocol": "http",
+							"host": [
+								"{{cname}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "a current user test",
 					"request": {
 						"method": "POST",
 						"header": [

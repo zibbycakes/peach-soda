@@ -7,6 +7,8 @@ from datetime import datetime
 from pytz import timezone
 from markupsafe import escape
 from werkzeug.security import generate_password_hash, check_password_hash
+import user_class
+from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 
 app = Flask(__name__)
 app.secret_key = secret()
@@ -19,18 +21,30 @@ cur = conn.cursor()
 
 tz = timezone('America/Chicago')
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return user_class.User.get(user_id)
+
 @app.route('/')
 def ping():
+    # return {'success': 'Hello world, ' + (current_user.user_id.decode('utf-8'))+'!'}
     return {'success': 'Hello world!'}
 
+
 @app.route('/suggestions', methods=['GET', 'POST'])
+@login_required
 def suggestion():
     if request.method == 'GET':
         return get_suggestions()
     else:
         req_data = request.get_json()
         if 'suggestion' in req_data:
-            return post_suggestions(req_data['suggestion'], req_data['user_id'])
+            # return post_suggestions(req_data['suggestion'], req_data['user_id'])
+            return post_suggestions(req_data['suggestion'])
+
 
 def get_suggestions():
     try:
@@ -68,7 +82,18 @@ def post_suggestions(suggestion_text, user_id):
         print(e)
         return {'error': 'adding "' + suggestion_text + '" to the database was unsuccessful.'}
 
+def post_suggestions(suggestion_text):
+    try:
+        now_string = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S %Z')
+        cur.execute("insert into music_suggestions (suggestion, date_added, user_id) values('" + suggestion_text + "','" + now_string + "','" + str(current_user.user_id.decode('utf-8')) + "')")
+        conn.commit()
+        return {'success': 'successfully added "' + suggestion_text + '" to the database at time ' + now_string + ' for user id ' + str(current_user.user_id.decode('utf-8')) + '.'}
+    except Exception as e:
+        print(e)
+        return {'error': 'adding "' + suggestion_text + '" to the database was unsuccessful.'}
+
 @app.route('/suggestions/<suggestion_id>')
+@login_required
 def get_suggestion(suggestion_id):
     try:
         cur.execute('select * from music_suggestions where sugg_id='+suggestion_id)
@@ -86,6 +111,7 @@ def get_suggestion(suggestion_id):
         return {'error': 'failed to fetch id ' +suggestion_id}
 
 @app.route('/suggestions/<suggestion_id>/use', methods=['PUT'])
+@login_required
 def set_suggestion_to_used(suggestion_id):
     try:
         now_string = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S %Z')
@@ -97,6 +123,7 @@ def set_suggestion_to_used(suggestion_id):
         return {'error': 'setting "' + suggestion_id + '" to used was unsuccessful.'}
 
 @app.route('/suggestions/<suggestion_id>/activate', methods=['PUT'])
+@login_required
 def set_suggestion_to_active(suggestion_id):
     try:
         now_string = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S %Z')
@@ -108,6 +135,7 @@ def set_suggestion_to_active(suggestion_id):
         return {'error': 'setting "' + suggestion_id + '" to active was unsuccessful.'}
 
 @app.route('/suggestions/<suggestion_id>/remove', methods=['POST'])
+@login_required
 def remove_suggestion(suggestion_id):
     try:
         cur.execute("delete from music_suggestions where sugg_id='" + suggestion_id + "'")
@@ -146,6 +174,7 @@ def does_user_exist(username):
         return false
 
 @app.route('/user/<user_id>/remove', methods=['POST'])
+@login_required #elevation?
 def remove_user(user_id):
     try:
         cur.execute("delete from users where user_id='" + user_id + "'")
@@ -162,18 +191,23 @@ def login():
         cur.execute("select user_id, first_name, username, password, spotify_id from users where username=\'" + login_data['username'] + "\'")
         row = cur.fetchone()
 
-        user = {
+        db_user = {
             'user_id': row[0],
             'first_name': row[1],
             'username': row[2],
             'password': row[3],
             'spotify_id': row[4]
         }
-        if not check_password_hash(user['password'], login_data['password']):
+        if not check_password_hash(db_user['password'], login_data['password']):
             return {'error': 'incorrect username or password'}
         else:
-            session['username'] = user['username']
-            session['first_name'] = user['first_name']
+            session['username'] = db_user['username']
+            session['first_name'] = db_user['first_name']
+            user_obj = user_class.User(str(db_user['user_id']).encode("utf-8"), session['username'], session['first_name']) 
+            # need activated account?
+            user_obj.set_activated(True)
+            user_obj.set_authenticated(True)
+            login_user(user_obj)
             return {'success': 'Successfully logged in for ' + escape(session['username'])}
     except psycopg2.ProgrammingError as e:
         print(e)
@@ -181,3 +215,14 @@ def login():
     except Exception as e:
         print(e)
         return {'error': 'Unknown error while logging in'}
+
+@app.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    try:
+        # print('logging out for ' + current_user.username + '...')
+        logout_user()
+        return {'success': 'successfully logged out'}
+    except Exception as e:
+        print(e)
+        return {'error': 'Unknown error while logging out'}
