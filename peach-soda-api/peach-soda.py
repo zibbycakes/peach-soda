@@ -171,24 +171,13 @@ def does_user_exist(username):
         return False
     except Exception as e:
         print(e)
-        return false
-
-@app.route('/user/<user_id>/remove', methods=['POST'])
-@login_required #elevation?
-def remove_user(user_id):
-    try:
-        cur.execute("delete from users where user_id='" + user_id + "'")
-        conn.commit()
-        return {'success': 'successfully removed user with id ' + user_id}
-    except Exception as e:
-        print(e)
-        return {'error': 'removing user with id"' + user_id + '" was unsuccessful.'}    
+        return False 
 
 @app.route('/login', methods=['POST'])
 def login():
     try:
         login_data = request.get_json()
-        cur.execute("select user_id, first_name, username, password, spotify_id from users where username=\'" + login_data['username'] + "\'")
+        cur.execute("select user_id, first_name, username, password, spotify_id, activated from users where username=\'" + login_data['username'] + "\'")
         row = cur.fetchone()
 
         db_user = {
@@ -196,7 +185,8 @@ def login():
             'first_name': row[1],
             'username': row[2],
             'password': row[3],
-            'spotify_id': row[4]
+            'spotify_id': row[4],
+            'activated': row[5]
         }
         if not check_password_hash(db_user['password'], login_data['password']):
             return {'error': 'incorrect username or password'}
@@ -205,7 +195,7 @@ def login():
             session['first_name'] = db_user['first_name']
             user_obj = user_class.User(str(db_user['user_id']).encode("utf-8"), session['username'], session['first_name']) 
             # need activated account?
-            user_obj.set_activated(True)
+            user_obj.set_activated(db_user['activated'])
             user_obj.set_authenticated(True)
             login_user(user_obj)
             return {'success': 'Successfully logged in for ' + escape(session['username'])}
