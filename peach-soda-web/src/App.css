@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.app-bar {
+  background-color: #F98B88 !important;
+}
+
+.login-form {
+  display: grid;
+  width: 20%;
+  margin-left: auto;
+  margin-right: auto;
+}
